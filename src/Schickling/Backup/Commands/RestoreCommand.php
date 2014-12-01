@@ -31,13 +31,13 @@ class RestoreCommand extends BaseCommand
 	{
 		$sourceFile = $this->getDumpsPath() . $fileName;
 
-        if ($this->isCompressed($sourceFile))
-            $sourceFile = $this->uncompress($sourceFile);
+		if ($this->isCompressed($sourceFile))
+			$sourceFile = $this->uncompress($sourceFile);
 
 		$status = $this->database->restore($this->getUncompressedFileName($sourceFile));
 		
-        if ($this->isCompressed($sourceFile))
-            $this->uncompressCleanup($this->getUncompressedFileName($sourceFile));
+		if ($this->isCompressed($sourceFile))
+			$this->uncompressCleanup($this->getUncompressedFileName($sourceFile));
 
 		if ($status === true)
 		{
@@ -77,51 +77,51 @@ class RestoreCommand extends BaseCommand
 		}
 	}
 
-    /** 
-     * Uncompress a GZip compressed file
-     * 
-     * @param string $fileName      Relative or absolute path to file
-     * @return string               Name of uncompressed file (without .gz extension)
-     */ 
-    protected function uncompress($fileName)
-    {
-        $fileNameUncompressed = $this->getUncompressedFileName($fileName);
-        $command = sprintf('gzip -dc %s > %s', $fileName, $fileNameUncompressed);
-        if ($this->console->run($command) !== true)
-            $this->line($this->colors->getColoredString("\n".'Uncompress of gzipped file failed.'."\n",'red'));
+	/** 
+	 * Uncompress a GZip compressed file
+	 * 
+	 * @param string $fileName      Relative or absolute path to file
+	 * @return string               Name of uncompressed file (without .gz extension)
+	 */ 
+	protected function uncompress($fileName)
+	{
+		$fileNameUncompressed = $this->getUncompressedFileName($fileName);
+		$command = sprintf('gzip -dc %s > %s', $fileName, $fileNameUncompressed);
+		if ($this->console->run($command) !== true)
+			$this->line($this->colors->getColoredString("\n".'Uncompress of gzipped file failed.'."\n",'red'));
 
-        return $fileNameUncompressed;
-    }
+		return $fileNameUncompressed;
+	}
 
-    /**
-     * Remove uncompressed files 
-     * 
-     * Files are temporarily uncompressed for usage in restore. We do not need these copies
-     * permanently.
-     * 
-     * @param string $fileName      Relative or absolute path to file
-     * @return boolean              Success or failure of cleanup
-     */ 
-    protected function cleanup($fileName)
-    {
-        $status = true;
-        $fileNameUncompressed = $this->getUncompressedFileName($fileName);
-        if ($fileName !== $fileNameUncompressed)
-            $status = File::delete($fileName);
+	/**
+	 * Remove uncompressed files 
+	 * 
+	 * Files are temporarily uncompressed for usage in restore. We do not need these copies
+	 * permanently.
+	 * 
+	 * @param string $fileName      Relative or absolute path to file
+	 * @return boolean              Success or failure of cleanup
+	 */ 
+	protected function cleanup($fileName)
+	{
+		$status = true;
+		$fileNameUncompressed = $this->getUncompressedFileName($fileName);
+		if ($fileName !== $fileNameUncompressed)
+			$status = File::delete($fileName);
 
-        return $status;
-    }
+		return $status;
+	}
 
-    /**
-     * Retrieve filename without Gzip extension
-     * 
-     * @param string $fileName      Relative or absolute path to file
-     * @return string               Filename without .gz extension
-     */ 
-    protected function getUncompressedFileName($fileName)
-    {
-        return preg_replace('"\.gz$"', '', $fileName);
-    }
+	/**
+	 * Retrieve filename without Gzip extension
+	 * 
+	 * @param string $fileName      Relative or absolute path to file
+	 * @return string               Filename without .gz extension
+	 */ 
+	protected function getUncompressedFileName($fileName)
+	{
+		return preg_replace('"\.gz$"', '', $fileName);
+	}
 
 	protected function getArguments()
 	{

@@ -43,12 +43,12 @@ class BackupCommand extends BaseCommand
 
 		if ($status === true)
 		{
-            if ($this->isCompressionEnabled())
-            {
-                $this->compress();
-                $this->fileName .= ".gz";
-                $this->filePath .= ".gz";
-            }
+			if ($this->isCompressionEnabled())
+			{
+				$this->compress();
+				$this->fileName .= ".gz";
+				$this->filePath .= ".gz";
+			}
 			if ($this->argument('filename'))
 			{
 				$this->line(sprintf($this->colors->getColoredString("\n".'Database backup was successful. Saved to %s'."\n",'green'), $this->filePath));
@@ -76,28 +76,28 @@ class BackupCommand extends BaseCommand
 		}
 	}
 
-    /**
-     * Perform Gzip compression on file
-     * 
-     * @return boolean      Status of command
-     */ 
-    protected function compress()
-    {
-        $command = sprintf('gzip -9 %s', $this->filePath);
-        return $this->console->run($command);
-    }
+	/**
+	 * Perform Gzip compression on file
+	 * 
+	 * @return boolean      Status of command
+	 */ 
+	protected function compress()
+	{
+		$command = sprintf('gzip -9 %s', $this->filePath);
+		return $this->console->run($command);
+	}
 
 	/**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return array(
-            array('filename', InputArgument::OPTIONAL, 'Filename or -path for the dump.'),
-        );
-    }
+	 * Get the console command arguments.
+	 *
+	 * @return array
+	 */
+	protected function getArguments()
+	{
+		return array(
+			array('filename', InputArgument::OPTIONAL, 'Filename or -path for the dump.'),
+		);
+	}
 
 	protected function getOptions()
 	{

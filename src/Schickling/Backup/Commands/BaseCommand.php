@@ -10,7 +10,7 @@ class BaseCommand extends Command
 {
 	protected $databaseBuilder;
 	protected $colors;
-    protected $console;
+	protected $console;
 
 	public function __construct(DatabaseBuilder $databaseBuilder)
 	{
@@ -18,7 +18,7 @@ class BaseCommand extends Command
 
 		$this->databaseBuilder = $databaseBuilder;
 		$this->colors = new ConsoleColors();
-        $this->console = new Console();
+		$this->console = new Console();
 	}
 
 	public function getDatabase($database)
@@ -34,23 +34,23 @@ class BaseCommand extends Command
 		return Config::get('backup::path');
 	}
 
-    public function enableCompression()
-    {
-        return Config::set('backup::compress', true);
-    }
+	public function enableCompression()
+	{
+		return Config::set('backup::compress', true);
+	}
 
-    public function disableCompression()
-    {
-        return Config::set('backup::compress', false);
-    }
+	public function disableCompression()
+	{
+		return Config::set('backup::compress', false);
+	}
 
-    public function isCompressionEnabled()
-    {
-        return Config::get('backup::compress');
-    }
+	public function isCompressionEnabled()
+	{
+		return Config::get('backup::compress');
+	}
 
-    public function isCompressed($fileName)
-    {
-        return pathinfo($fileName, PATHINFO_EXTENSION) === "gz";
-    }
+	public function isCompressed($fileName)
+	{
+		return pathinfo($fileName, PATHINFO_EXTENSION) === "gz";
+	}
 }
