@@ -43,6 +43,12 @@ class BackupCommand extends BaseCommand
 
 		if ($status === true)
 		{
+            if ($this->isCompressionEnabled())
+            {
+                $this->compress();
+                $this->fileName .= ".gz";
+                $this->filePath .= ".gz";
+            }
 			if ($this->argument('filename'))
 			{
 				$this->line(sprintf($this->colors->getColoredString("\n".'Database backup was successful. Saved to %s'."\n",'green'), $this->filePath));
@@ -69,6 +75,17 @@ class BackupCommand extends BaseCommand
 			$this->line(sprintf($this->colors->getColoredString("\n".'Database backup failed. %s'."\n",'red'), $status));
 		}
 	}
+
+    /**
+     * Perform Gzip compression on file
+     * 
+     * @return boolean      Status of command
+     */ 
+    protected function compress()
+    {
+        $command = sprintf('gzip -9 %s', $this->filePath);
+        return $this->console->run($command);
+    }
 
 	/**
      * Get the console command arguments.
@@ -118,5 +135,4 @@ class BackupCommand extends BaseCommand
 
 		return Config::get('backup::s3.path', $default);;
 	}
-
 }

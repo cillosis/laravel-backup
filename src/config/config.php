@@ -13,4 +13,6 @@ return array(
 		'path' => ''
 		),
 
+    'compress' => true,
+
 	);
