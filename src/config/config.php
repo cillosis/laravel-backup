@@ -12,7 +12,7 @@ return array(
 		'path' => '',
 	),
 
-    'compress' => true,
+    'compress' => false,
 
 );
 

@@ -64,7 +64,6 @@ class BackupCommandTest extends TestCase
 
     public function testSuccessfulCompressedBackup()
     {
-
         $this->databaseMock->shouldReceive('getFileExtension')
                            ->once()
                            ->andReturn('sql');
@@ -81,7 +80,6 @@ class BackupCommandTest extends TestCase
 
     public function testFailingBackup()
     {
-
         $this->databaseMock->shouldReceive('getFileExtension')
                            ->once()
                            ->andReturn('sql');
@@ -187,5 +185,4 @@ class BackupCommandTest extends TestCase
         $regex = "/^(\\033\[[0-9;]*m)*(\\n)*Database backup was successful. Saved to " . $path . "\/dummy\/mydump.sql(\\n)*(\\033\[0m)*$/";
         $this->assertRegExp($regex, $this->tester->getDisplay());
     }
-
 }
