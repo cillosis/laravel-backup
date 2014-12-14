@@ -53,4 +53,5 @@ class BaseCommand extends Command
 	{
 		return pathinfo($fileName, PATHINFO_EXTENSION) === "gz";
 	}
+
 }

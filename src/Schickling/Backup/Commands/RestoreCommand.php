@@ -32,12 +32,15 @@ class RestoreCommand extends BaseCommand
 		$sourceFile = $this->getDumpsPath() . $fileName;
 
 		if ($this->isCompressed($sourceFile))
-			$sourceFile = $this->uncompress($sourceFile);
-
-		$status = $this->database->restore($this->getUncompressedFileName($sourceFile));
-		
-		if ($this->isCompressed($sourceFile))
-			$this->uncompressCleanup($this->getUncompressedFileName($sourceFile));
+        {
+			$uncompressedFile = $this->uncompress($sourceFile);
+            $status = $this->database->restore($uncompressedFile);
+			$this->cleanup($uncompressedFile);
+        }
+        else
+        {
+            $status = $this->database->restore($sourceFile);
+        }
 
 		if ($status === true)
 		{
@@ -64,9 +67,12 @@ class RestoreCommand extends BaseCommand
 			foreach ($finder as $dump)
 			{
 				$i++;
-				if($i!=$count){
+				if($i!=$count)
+				{
 					$this->line($this->colors->getColoredString($dump->getFilename(),'brown'));
-				}else{
+				}
+				else
+				{
 					$this->line($this->colors->getColoredString($dump->getFilename()."\n",'brown'));
 				}
 			}
@@ -78,7 +84,7 @@ class RestoreCommand extends BaseCommand
 	}
 
 	/** 
-	 * Uncompress a GZip compressed file
+	 * Uncompress a compressed file
 	 * 
 	 * @param string $fileName      Relative or absolute path to file
 	 * @return string               Name of uncompressed file (without .gz extension)
@@ -87,8 +93,16 @@ class RestoreCommand extends BaseCommand
 	{
 		$fileNameUncompressed = $this->getUncompressedFileName($fileName);
 		$command = sprintf('gzip -dc %s > %s', $fileName, $fileNameUncompressed);
-		if ($this->console->run($command) !== true)
-			$this->line($this->colors->getColoredString("\n".'Uncompress of gzipped file failed.'."\n",'red'));
+		if ( ! file_exists($fileName))
+        {
+            $this->line($this->colors->getColoredString("\n".'Uncompress failed. File does not exist.'."\n",'red'));
+            return false;
+        }
+        elseif ( ! $this->console->run($command))
+        {
+			$this->line($this->colors->getColoredString("\n".'File uncompress failed.'."\n",'red'));
+            return false;
+        }
 
 		return $fileNameUncompressed;
 	}
@@ -104,12 +118,7 @@ class RestoreCommand extends BaseCommand
 	 */ 
 	protected function cleanup($fileName)
 	{
-		$status = true;
-		$fileNameUncompressed = $this->getUncompressedFileName($fileName);
-		if ($fileName !== $fileNameUncompressed)
-			$status = File::delete($fileName);
-
-		return $status;
+		return File::delete($fileName);
 	}
 
 	/**
@@ -127,7 +136,7 @@ class RestoreCommand extends BaseCommand
 	{
 		return array(
 			array('dump', InputArgument::OPTIONAL, 'Filename of the dump')
-			);
+		);
 	}
 
 	protected function getOptions()
@@ -136,5 +145,4 @@ class RestoreCommand extends BaseCommand
 			array('database', null, InputOption::VALUE_OPTIONAL, 'The database connection to restore to'),
 		);
 	}
-
 }
